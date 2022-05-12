@@ -12,7 +12,7 @@ export default function Document() {
           rel="stylesheet"
         />
       </Head>
-      <body>
+      <body className="bg-[#1B1F2A] text-white">
         <Main />
         <NextScript />
       </body>
