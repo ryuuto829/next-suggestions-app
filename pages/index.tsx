@@ -12,7 +12,9 @@ export default function Home() {
       </header>
       <div className="flex mt-12 justify-between items-center">
         <div className="flex justify-between items-center">
-          <SortingSelect />
+          <div className="mr-3">
+            <SortingSelect />
+          </div>
           <FilterMenu />
         </div>
         <div>
