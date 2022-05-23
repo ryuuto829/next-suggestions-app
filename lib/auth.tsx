@@ -1,8 +1,13 @@
-import { useState, createContext, ReactNode, useContext } from 'react'
-import { GoogleAuthProvider, signInWithPopup, User as FirebaseUser } from 'firebase/auth'
+import { useState, useEffect, createContext, ReactNode, useContext } from 'react'
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from 'firebase/auth'
 
 import { auth } from '@lib/firebase'
-import { User, UserToken, CreateAuthContext } from '@lib/types'
+import { User, CreateAuthContext } from '@lib/types'
 
 const authContext = createContext<CreateAuthContext>(undefined)
 
@@ -26,39 +31,46 @@ export function useAuth() {
 }
 
 export function useProvideAuth() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User>(null)
 
-  const handleUser = async (userResponse: FirebaseUser, token: UserToken) => {
-    if (userResponse) {
-      const user = formatUser(userResponse, token)
+  const handleUser = async (userRaw: FirebaseUser | null) => {
+    if (userRaw) {
+      const user = formatUser(userRaw)
+
       setUser(user)
+      return user
     } else {
       setUser(null)
+      return null
     }
   }
 
-  const formatUser = (user: FirebaseUser, token: UserToken) => ({
+  const formatUser = (user: FirebaseUser) => ({
     uid: user.uid,
     email: user.email,
     name: user.displayName,
     provider: user.providerData[0].providerId,
     photoURL: user.photoURL,
-    token,
   })
+
+  useEffect(() => {
+    // Persist the current user
+    const unsubscribe = onAuthStateChanged(auth, handleUser)
+
+    return () => unsubscribe()
+  }, [])
 
   const signInWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider()
 
-    try {
-      const result = await signInWithPopup(auth, googleProvider)
-      const credential = GoogleAuthProvider.credentialFromResult(result)
-      const token = credential?.accessToken || null
-
-      await handleUser(result.user, token)
-    } catch (error) {
-      setUser(null)
-    }
+    const response = await signInWithPopup(auth, googleProvider)
+    await handleUser(response.user)
   }
 
-  return { user, signInWithGoogle }
+  const signOut = async () => {
+    await auth.signOut()
+    await handleUser(null)
+  }
+
+  return { user, signInWithGoogle, signOut }
 }
