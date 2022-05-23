@@ -5,6 +5,7 @@ import { Dialog } from '@headlessui/react'
 
 import SortingSelect from '@components/SortingSelect'
 import FilterMenu from '@components/FilterMenu'
+import NavigationBar from '@components/NavigationBar'
 import { useAuth } from '@lib/auth'
 
 const posts = [
@@ -32,13 +33,15 @@ export default function Home() {
   const router = useRouter()
   const isLogin = router.asPath === '/login'
 
-  const { signInWithGoogle, user } = useAuth()
+  const { user, signInWithGoogle, signOut } = useAuth()
 
-  console.log(user)
-
-  const handleButtonClick = () => {
-    signInWithGoogle()
+  const handleSignInWithGoogle = async () => {
+    await signInWithGoogle()
     // router.push('/', '/login', { shallow: true })
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
   }
 
   const handleDialogClose = () => {
@@ -52,14 +55,12 @@ export default function Home() {
       </Dialog>
 
       <div className="pt-0 sm:pt-32">
-        <div className="absolute top-5 right-5 sm:top-6 sm:right-8">
-          <button
-            className="rounded w-full bg-[#242837] hover:bg-[#2b3040] py-1.5 px-3 cursor-pointer text-[#B2B8CD] font-medium text-sm"
-            onClick={handleButtonClick}
-          >
-            Sign in / Sign up
-          </button>
-        </div>
+        <NavigationBar
+          user={user}
+          handleSignInWithGoogle={handleSignInWithGoogle}
+          handleSignOut={handleSignOut}
+        />
+
         <main className="bg-[#1E222E] max-w-2xl mx-auto rounded sm:min-h-full min-h-screen">
           <header className="sm:px-16 sm:py-12 px-5 pt-20 pb-11">
             <h1 className="text-xl">📚 Next Suggestions App</h1>
