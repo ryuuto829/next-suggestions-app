@@ -5,6 +5,7 @@ import { Dialog } from '@headlessui/react'
 
 import SortingSelect from '@components/SortingSelect'
 import FilterMenu from '@components/FilterMenu'
+import { useAuth } from '@lib/auth'
 
 const posts = [
   {
@@ -31,8 +32,13 @@ export default function Home() {
   const router = useRouter()
   const isLogin = router.asPath === '/login'
 
+  const { signInWithGoogle, user } = useAuth()
+
+  console.log(user)
+
   const handleButtonClick = () => {
-    router.push('/', '/login', { shallow: true })
+    signInWithGoogle()
+    // router.push('/', '/login', { shallow: true })
   }
 
   const handleDialogClose = () => {
