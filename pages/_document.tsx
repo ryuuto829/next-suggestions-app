@@ -12,7 +12,7 @@ export default function Document() {
           rel="stylesheet"
         />
       </Head>
-      <body className="bg-[#1B1F2A] text-white relative min-h-screen h-full p-0 m-0">
+      <body className="bg-[color:var(--black-color)] text-white relative min-h-screen h-full p-0 m-0 min-w-80">
         <Main />
         <NextScript />
       </body>
