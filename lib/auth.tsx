@@ -32,15 +32,20 @@ export function useAuth() {
 
 export function useProvideAuth() {
   const [user, setUser] = useState<User>(null)
+  const [loading, setLoading] = useState(true)
 
   const handleUser = async (userRaw: FirebaseUser | null) => {
     if (userRaw) {
       const user = formatUser(userRaw)
 
       setUser(user)
+      setLoading(false)
+
       return user
     } else {
       setUser(null)
+      setLoading(false)
+
       return null
     }
   }
@@ -61,6 +66,7 @@ export function useProvideAuth() {
   }, [])
 
   const signInWithGoogle = async () => {
+    setLoading(true)
     const googleProvider = new GoogleAuthProvider()
 
     const response = await signInWithPopup(auth, googleProvider)
@@ -68,9 +74,10 @@ export function useProvideAuth() {
   }
 
   const signOut = async () => {
+    setLoading(true)
     await auth.signOut()
     await handleUser(null)
   }
 
-  return { user, signInWithGoogle, signOut }
+  return { user, loading, signInWithGoogle, signOut }
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
@@ -8,6 +9,7 @@ import FilterMenu from '@components/FilterMenu'
 import NavigationBar from '@components/NavigationBar'
 import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
+import PostModal from '@components/PostModal'
 import { useAuth } from '@lib/auth'
 
 const posts = [
@@ -33,17 +35,33 @@ const posts = [
 
 export default function Home() {
   const router = useRouter()
-  const isLogin = router.asPath === '/login'
-  const isNewPost = router.asPath === '/new-post'
+  const { user, loading, signInWithGoogle, signOut } = useAuth()
 
-  const { user, signInWithGoogle, signOut } = useAuth()
+  const [isLogin, setIsLogin] = useState(false)
+  const [isNewPost, setIsNewPost] = useState(false)
+  const [currentPost, setCurrentPost] = useState(false)
 
-  const handleSignIn = async () => {
-    router.push('/', '/login', { shallow: true })
+  const handleSignIn = () => {
+    if (user) {
+      handleModalClose()
+    } else {
+      setIsLogin(true)
+    }
   }
 
-  const handleSignOut = async () => {
-    await signOut()
+  const handleNewPost = () => {
+    if (user) {
+      setIsNewPost(true)
+    } else {
+      router.push('/?login=true', '/login')
+    }
+  }
+
+  const handleModalClose = () => {
+    router.push('/', undefined)
+    setIsLogin(false)
+    setIsNewPost(false)
+    setCurrentPost(false)
   }
 
   const handleSignInWithGoogle = async () => {
@@ -51,13 +69,48 @@ export default function Home() {
     handleModalClose()
   }
 
-  const handleModalClose = () => {
-    router.push('/', '/', { shallow: true })
+  const handlePost = () => {
+    setCurrentPost(true)
   }
 
-  const handleNewPost = () => {
-    router.push('/', '/new-post', { shallow: true })
-  }
+  useEffect(() => {
+    if (loading) return
+
+    if (router.query['login']) {
+      router.push('/?login=true', '/login', { shallow: true })
+    }
+
+    if (router.query['new-post']) {
+      router.push('/?new-post=true', '/new-post', { shallow: true })
+    }
+
+    if (router.query['post']) {
+      router.push(`/?post=${router.query.post}`, `/post/${router.query.post}`, {
+        shallow: true,
+      })
+    }
+
+    const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
+      console.log('shallow: ', shallow)
+      if (url.includes('/post/')) {
+        handlePost()
+      }
+
+      if (url === '/login') {
+        handleSignIn()
+      }
+
+      if (url === '/new-post') {
+        handleNewPost()
+      }
+    }
+
+    router.events.on('routeChangeComplete', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [loading])
 
   return (
     <>
@@ -66,13 +119,13 @@ export default function Home() {
       </Head>
 
       <SigninModal
-        isLogin={isLogin}
+        isOpen={isLogin}
         handleModalClose={handleModalClose}
         handleSignInWithGoogle={handleSignInWithGoogle}
       />
       <SuggestionModal isOpen={isNewPost} handleModalClose={handleModalClose} />
-
-      <NavigationBar user={user} handleSignOut={handleSignOut} handleSignIn={handleSignIn} />
+      <PostModal isOpen={currentPost} handleModalClose={handleModalClose} />
+      <NavigationBar user={user} handleSignOut={signOut} />
 
       <div className="pt-0 sm:pt-32">
         <main className="bg-[color:var(--dark-blue-charcoal-color)] max-w-2xl mx-auto rounded sm:min-h-full min-h-screen">
@@ -90,12 +143,11 @@ export default function Home() {
               <FilterMenu />
             </div>
             <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
-              <button
-                onClick={handleNewPost}
-                className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]"
-              >
-                Make suggestion
-              </button>
+              <Link href="/?new-post=true" as="/new-post">
+                <button className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]">
+                  Make suggestion
+                </button>
+              </Link>
             </div>
           </div>
           <div className="px-5 sm:px-16 sm:py-8 py-6">
@@ -105,7 +157,7 @@ export default function Home() {
                   key={post.id}
                   className="flex sm:items-center items-start justify-between sm:flex-row flex-col py-4"
                 >
-                  <Link href={`/posts/${post.id}`}>
+                  <Link href={`/?post=${post.id}`} as={`/post/${post.id}`}>
                     <div className="cursor-pointer w-full">
                       <div className="flex items-center">
                         <h2 className="font-medium">{post.title}</h2>

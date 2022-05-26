@@ -2,33 +2,33 @@ import { Dialog } from '@headlessui/react'
 import { MarkGithubIcon } from '@primer/octicons-react'
 
 export type SigninModalProps = {
-  isLogin: boolean
+  isOpen: boolean
   handleModalClose: () => void
   handleSignInWithGoogle: () => Promise<void>
 }
 
 export default function SigninModal({
-  isLogin,
+  isOpen,
   handleModalClose,
   handleSignInWithGoogle,
 }: SigninModalProps) {
   return (
     <Dialog
       as="div"
-      open={isLogin}
+      open={isOpen}
       onClose={handleModalClose}
       className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
     >
       {/* Modal overlay */}
-      <div className="fixed inset-0 bg-black/25" />
+      <div className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
 
       {/* Modal content */}
-      <Dialog.Panel className="flex flex-col bg-[color:var(--dark-blue-charcoal-color)] max-w-md w-full text-center px-4 py-10 sm:px-8 z-10 divide-y divide-gray-700">
+      <Dialog.Panel className="flex flex-col bg-[color:var(--dark-blue-charcoal-color)] max-w-md w-full text-center px-4 py-10 sm:px-8 z-10 divide-y divide-gray-700 m-5">
         <header className="flex flex-col pb-6 relative">
           <Dialog.Title className="text-xl font-bold text-white sm:text-2xl w-full">
             Sign in
           </Dialog.Title>
-          <Dialog.Description className="text-sm text-[color:var(--dark-gray-charcoal-color)] w-full mt-3">
+          <Dialog.Description className="text-sm text-[color:var(--dark-gray-charcoal-color)] w-full mt-5">
             Sign in to suggest new ideas or vote on existing ones.
           </Dialog.Description>
 
@@ -84,9 +84,9 @@ export default function SigninModal({
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-700"></div>
             </div>
-            <div className="relative flex justify-center text-sm leading-5">
+            <div className="relative flex justify-center text-xs leading-5">
               <span className="px-2 font-medium text-[color:var(--dark-gray-charcoal-color)] bg-[color:var(--dark-blue-charcoal-color)]">
-                Or test app
+                Or sign in for testing
               </span>
             </div>
           </div>
