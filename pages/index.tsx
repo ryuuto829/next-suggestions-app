@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Head from 'next/head'
 import { ChevronUpIcon, CommentIcon } from '@primer/octicons-react'
 
 import SortingSelect from '@components/SortingSelect'
@@ -11,6 +10,7 @@ import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
 import PostModal from '@components/PostModal'
 import { useAuth } from '@lib/auth'
+import { decorateLink } from '@utils/decorateLink'
 
 const posts = [
   {
@@ -35,97 +35,60 @@ const posts = [
 
 export default function Home() {
   const router = useRouter()
-  const { user, loading, signInWithGoogle, signOut } = useAuth()
+  const { user, loading, signInWithGoogle } = useAuth()
 
-  const [isLogin, setIsLogin] = useState(false)
-  const [isNewPost, setIsNewPost] = useState(false)
-  const [currentPost, setCurrentPost] = useState(false)
-
-  const handleSignIn = () => {
-    if (user) {
-      handleModalClose()
-    } else {
-      setIsLogin(true)
-    }
-  }
-
-  const handleNewPost = () => {
-    if (user) {
-      setIsNewPost(true)
-    } else {
-      router.push('/?login=true', '/login')
-    }
-  }
+  const isLogin = router.query.login === ''
+  const isNewPost = router.query['new-post'] === ''
+  const isPostView = router.query.post !== undefined
 
   const handleModalClose = () => {
-    router.push('/', undefined)
-    setIsLogin(false)
-    setIsNewPost(false)
-    setCurrentPost(false)
+    router.push('/')
   }
 
   const handleSignInWithGoogle = async () => {
-    await signInWithGoogle()
+    await signInWithGoogle('/')
     handleModalClose()
   }
 
-  const handlePost = () => {
-    setCurrentPost(true)
+  const handleRouteChange = () => {
+    // 1. Redirect user to the main route if authenticated
+    if (isLogin && user) {
+      return router.push('/')
+    }
+
+    // 2. Redirect user to the login route if unauthenticated
+    if (isNewPost && !user) {
+      return router.push('/?login', '/login')
+    }
+
+    // 3. Replace url pathname with custom link decorator that uses no query, like: '?post=1' -> '/post/1'
+    if (isLogin || isNewPost || isPostView) {
+      return router.replace(router.asPath, decorateLink(router.asPath, router.query), {
+        shallow: true,
+      })
+    }
   }
 
   useEffect(() => {
     if (loading) return
 
-    if (router.query['login']) {
-      router.push('/?login=true', '/login', { shallow: true })
-    }
-
-    if (router.query['new-post']) {
-      router.push('/?new-post=true', '/new-post', { shallow: true })
-    }
-
-    if (router.query['post']) {
-      router.push(`/?post=${router.query.post}`, `/post/${router.query.post}`, {
-        shallow: true,
-      })
-    }
-
-    const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
-      console.log('shallow: ', shallow)
-      if (url.includes('/post/')) {
-        handlePost()
-      }
-
-      if (url === '/login') {
-        handleSignIn()
-      }
-
-      if (url === '/new-post') {
-        handleNewPost()
-      }
-    }
-
-    router.events.on('routeChangeComplete', handleRouteChange)
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange)
-    }
-  }, [loading])
+    handleRouteChange()
+  }, [user, loading])
 
   return (
     <>
-      <Head>
-        <title>{isLogin ? 'Sign in | Next Suggestions App' : 'Next Suggestions App'}</title>
-      </Head>
-
-      <SigninModal
-        isOpen={isLogin}
-        handleModalClose={handleModalClose}
-        handleSignInWithGoogle={handleSignInWithGoogle}
-      />
-      <SuggestionModal isOpen={isNewPost} handleModalClose={handleModalClose} />
-      <PostModal isOpen={currentPost} handleModalClose={handleModalClose} />
-      <NavigationBar user={user} handleSignOut={signOut} />
+      {!loading && (
+        <>
+          <SigninModal
+            isOpen={isLogin}
+            handleModalClose={handleModalClose}
+            handleSignInWithGoogle={handleSignInWithGoogle}
+          />
+          <SuggestionModal isOpen={isNewPost} handleModalClose={handleModalClose} />
+          <PostModal isOpen={isPostView} handleModalClose={handleModalClose} />
+          <NavigationBar />
+        </>
+      )}
 
       <div className="pt-0 sm:pt-32">
         <main className="bg-[color:var(--dark-blue-charcoal-color)] max-w-2xl mx-auto rounded sm:min-h-full min-h-screen">
@@ -143,7 +106,7 @@ export default function Home() {
               <FilterMenu />
             </div>
             <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
-              <Link href="/?new-post=true" as="/new-post">
+              <Link href={user ? '/?new-post' : '/?login'} as={user ? '/new-post' : '/login'}>
                 <button className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]">
                   Make suggestion
                 </button>

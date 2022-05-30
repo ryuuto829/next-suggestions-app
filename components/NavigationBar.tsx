@@ -1,20 +1,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { User } from '@lib/types'
+import { useAuth } from '@lib/auth'
 
-export type NavigationBarProps = {
-  user: User
-  handleSignOut: () => Promise<void>
-}
+export default function NavigationBar() {
+  const { user, signOut } = useAuth()
 
-export default function NavigationBar({ user, handleSignOut }: NavigationBarProps) {
   return (
     <div className="absolute top-5 right-5 sm:top-6 sm:right-8">
       {user ? (
         <div className="flex items-center">
           <button
-            onClick={handleSignOut}
+            onClick={signOut}
             className="rounded bg-[color:var(--blue-charcoal-color)] hover:bg-[color:var(--light-blue-charcoal-color)] py-1.5 px-3 cursor-pointer text-[color:var(--dark-gray-charcoal-color)] font-medium text-sm mr-3"
           >
             Sign out

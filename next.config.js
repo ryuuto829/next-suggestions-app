@@ -8,12 +8,12 @@ const nextConfig = {
     return [
       {
         source: '/login',
-        destination: '/?login=true',
+        destination: '/?login',
         permanent: true,
       },
       {
         source: '/new-post',
-        destination: '/?new-post=true',
+        destination: '/?new-post',
         permanent: true,
       },
       {

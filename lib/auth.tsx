@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, ReactNode, useContext } from 'react'
+import Router from 'next/router'
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -65,16 +66,22 @@ export function useProvideAuth() {
     return () => unsubscribe()
   }, [])
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (redirect?: string) => {
     setLoading(true)
     const googleProvider = new GoogleAuthProvider()
 
     const response = await signInWithPopup(auth, googleProvider)
     await handleUser(response.user)
+
+    if (redirect) {
+      Router.push(redirect)
+    }
   }
 
   const signOut = async () => {
-    setLoading(true)
+    Router.push('/')
+
+    // setLoading(true)
     await auth.signOut()
     await handleUser(null)
   }
