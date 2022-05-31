@@ -10,6 +10,7 @@ import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
 import PostModal from '@components/PostModal'
 import ModalDialog from '@components/ModalDialog'
+import EmptyNavigationBar from '@components/EmptyNavigationBar'
 import { useAuth } from '@lib/auth'
 
 const posts = [
@@ -74,20 +75,21 @@ export default function Home() {
 
   return (
     <>
+      {loading ? <EmptyNavigationBar /> : <NavigationBar />}
+
       {!loading && (
         <>
-          <SigninModal
-            isOpen={isLogin}
-            handleModalClose={handleModalClose}
-            handleSignInWithGoogle={handleSignInWithGoogle}
-            handleSignInWithGithub={handleSignInWithGithub}
-          />
-          <SuggestionModal isOpen={isNewPost} handleModalClose={handleModalClose} />
-          <PostModal isOpen={isPostView} handleModalClose={handleModalClose} />
-          <NavigationBar />
-
-          <ModalDialog isOpen={false} handleModalClose={handleModalClose}>
-            Test modal
+          <ModalDialog isOpen={isLogin} handleModalClose={handleModalClose}>
+            <SigninModal
+              handleSignInWithGoogle={handleSignInWithGoogle}
+              handleSignInWithGithub={handleSignInWithGithub}
+            />
+          </ModalDialog>
+          <ModalDialog isOpen={isNewPost} handleModalClose={handleModalClose} windowSize="wide">
+            <SuggestionModal />
+          </ModalDialog>
+          <ModalDialog isOpen={isPostView} handleModalClose={handleModalClose} windowSize="wide">
+            <PostModal />
           </ModalDialog>
         </>
       )}
