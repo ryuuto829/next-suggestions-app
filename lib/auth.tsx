@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, ReactNode, useContext } from 'react
 import Router from 'next/router'
 import {
   GoogleAuthProvider,
+  GithubAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
   User as FirebaseUser,
@@ -59,19 +60,46 @@ export function useProvideAuth() {
     photoURL: user.photoURL,
   })
 
+  const handleClosedPopup = async (errorCode: string) => {
+    if (errorCode === 'auth/popup-closed-by-user') {
+      await handleUser(null)
+    }
+  }
+
   useEffect(() => {
     // Persist the current user
     const unsubscribe = onAuthStateChanged(auth, handleUser)
 
     return () => unsubscribe()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const signInWithGoogle = async (redirect?: string) => {
     setLoading(true)
     const googleProvider = new GoogleAuthProvider()
 
-    const response = await signInWithPopup(auth, googleProvider)
-    await handleUser(response.user)
+    try {
+      const response = await signInWithPopup(auth, googleProvider)
+      await handleUser(response.user)
+    } catch (error: any) {
+      handleClosedPopup(error.code)
+    }
+
+    if (redirect) {
+      Router.push(redirect)
+    }
+  }
+
+  const signInWithGithub = async (redirect?: string) => {
+    setLoading(true)
+    const githubProvider = new GithubAuthProvider()
+
+    try {
+      const response = await signInWithPopup(auth, githubProvider)
+      await handleUser(response.user)
+    } catch (error: any) {
+      handleClosedPopup(error.code)
+    }
 
     if (redirect) {
       Router.push(redirect)
@@ -81,10 +109,9 @@ export function useProvideAuth() {
   const signOut = async () => {
     Router.push('/')
 
-    // setLoading(true)
     await auth.signOut()
     await handleUser(null)
   }
 
-  return { user, loading, signInWithGoogle, signOut }
+  return { user, loading, signInWithGoogle, signInWithGithub, signOut }
 }

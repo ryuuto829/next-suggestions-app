@@ -9,8 +9,8 @@ import NavigationBar from '@components/NavigationBar'
 import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
 import PostModal from '@components/PostModal'
+import ModalDialog from '@components/ModalDialog'
 import { useAuth } from '@lib/auth'
-import { decorateLink } from '@utils/decorateLink'
 
 const posts = [
   {
@@ -35,7 +35,7 @@ const posts = [
 
 export default function Home() {
   const router = useRouter()
-  const { user, loading, signInWithGoogle } = useAuth()
+  const { user, loading, signInWithGoogle, signInWithGithub } = useAuth()
 
   const isLogin = router.query.login === ''
   const isNewPost = router.query['new-post'] === ''
@@ -47,7 +47,10 @@ export default function Home() {
 
   const handleSignInWithGoogle = async () => {
     await signInWithGoogle('/')
-    handleModalClose()
+  }
+
+  const handleSignInWithGithub = async () => {
+    await signInWithGithub('/')
   }
 
   const handleRouteChange = () => {
@@ -60,19 +63,13 @@ export default function Home() {
     if (isNewPost && !user) {
       return router.push('/?login', '/login')
     }
-
-    // 3. Replace url pathname with custom link decorator that uses no query, like: '?post=1' -> '/post/1'
-    if (isLogin || isNewPost || isPostView) {
-      return router.replace(router.asPath, decorateLink(router.asPath, router.query), {
-        shallow: true,
-      })
-    }
   }
 
   useEffect(() => {
     if (loading) return
 
     handleRouteChange()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading])
 
   return (
@@ -83,10 +80,15 @@ export default function Home() {
             isOpen={isLogin}
             handleModalClose={handleModalClose}
             handleSignInWithGoogle={handleSignInWithGoogle}
+            handleSignInWithGithub={handleSignInWithGithub}
           />
           <SuggestionModal isOpen={isNewPost} handleModalClose={handleModalClose} />
           <PostModal isOpen={isPostView} handleModalClose={handleModalClose} />
           <NavigationBar />
+
+          <ModalDialog isOpen={false} handleModalClose={handleModalClose}>
+            Test modal
+          </ModalDialog>
         </>
       )}
 

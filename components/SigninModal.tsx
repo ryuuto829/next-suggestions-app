@@ -5,12 +5,14 @@ export type SigninModalProps = {
   isOpen: boolean
   handleModalClose: () => void
   handleSignInWithGoogle: () => Promise<void>
+  handleSignInWithGithub: () => Promise<void>
 }
 
 export default function SigninModal({
   isOpen,
   handleModalClose,
   handleSignInWithGoogle,
+  handleSignInWithGithub,
 }: SigninModalProps) {
   return (
     <Dialog
@@ -23,8 +25,8 @@ export default function SigninModal({
       <div className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
 
       {/* Modal content */}
-      <Dialog.Panel className="flex flex-col bg-[color:var(--dark-blue-charcoal-color)] max-w-md w-full text-center px-4 py-10 sm:px-8 z-10 divide-y divide-gray-700 m-5">
-        <header className="flex flex-col pb-6 relative">
+      <Dialog.Panel className="relative flex flex-col bg-[color:var(--dark-blue-charcoal-color)] max-w-md w-full text-center px-4 py-10 sm:px-8 z-10 divide-y divide-gray-700 m-5">
+        <header className="flex flex-col pb-6">
           <Dialog.Title className="text-xl font-bold text-white sm:text-2xl w-full">
             Sign in
           </Dialog.Title>
@@ -35,7 +37,7 @@ export default function SigninModal({
           {/* Modal Close Button */}
           <button
             onClick={handleModalClose}
-            className="absolute right-0 text-[color:var(--dark-gray-charcoal-color)] bg-transparent hover:bg-[color:var(--light-blue-charcoal-color)] rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
+            className="absolute right-2 top-2 text-[color:var(--dark-gray-charcoal-color)] bg-transparent hover:bg-[color:var(--light-blue-charcoal-color)] rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
           >
             <svg
               className="w-5 h-5"
@@ -73,7 +75,7 @@ export default function SigninModal({
           {/* Sign in with GitHub */}
           <button
             className="relative flex justify-center items-center w-full bg-gray-700/50 border border-gray-700 text-blue-50 rounded-md hover:bg-gray-800 px-4 py-2 text-sm mt-2"
-            onClick={handleSignInWithGoogle}
+            onClick={handleSignInWithGithub}
           >
             <MarkGithubIcon size={20} className="absolute left-0 ml-3" />
             <span>Continue with GitHub</span>
