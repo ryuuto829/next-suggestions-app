@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth'
 
 import { auth } from '@lib/firebase'
+import { createUser } from '@lib/db'
 import { User, CreateAuthContext } from '@lib/types'
 
 const authContext = createContext<CreateAuthContext>(undefined)
@@ -39,6 +40,8 @@ export function useProvideAuth() {
   const handleUser = async (userRaw: FirebaseUser | null) => {
     if (userRaw) {
       const user = formatUser(userRaw)
+
+      await createUser(user.uid, user)
 
       setUser(user)
       setLoading(false)
