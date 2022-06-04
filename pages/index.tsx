@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { FieldValues } from 'react-hook-form'
 
 import SortingSelect from '@components/SortingSelect'
 import FilterMenu from '@components/FilterMenu'
@@ -12,22 +13,23 @@ import ModalDialog from '@components/ModalDialog'
 import EmptyNavigationBar from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
 import { useAuth } from '@lib/auth'
-import { getAllPosts } from '@lib/db'
+import { createPost } from '@lib/db'
+// import { getAllPosts } from '@lib/db'
 import { Post } from '@lib/types'
 
 export type HomeProps = {
   allPosts: Post[]
 }
 
-export async function getStaticProps() {
-  const allPosts = await getAllPosts()
+// export async function getStaticProps() {
+//   const { posts } = await getAllPosts()
 
-  return {
-    props: {
-      allPosts,
-    },
-  }
-}
+//   return {
+//     props: {
+//       allPosts: posts,
+//     },
+//   }
+// }
 
 export default function Home({ allPosts }: HomeProps) {
   const router = useRouter()
@@ -68,6 +70,25 @@ export default function Home({ allPosts }: HomeProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading])
 
+  const handleFormSubmit = async (data: FieldValues) => {
+    if (!user) return
+
+    const newSuggestion = {
+      id: '1',
+      autor: user.name,
+      authorId: user.uid,
+      title: data.title,
+      topic: data.topic,
+      content: data.content.replace('\n', '\n\n'),
+      createdAt: new Date().toISOString(),
+      comments: [],
+      status: 'active',
+    } as Post
+
+    await createPost(newSuggestion)
+    handleModalClose()
+  }
+
   return (
     <>
       {loading ? <EmptyNavigationBar /> : <NavigationBar />}
@@ -81,7 +102,7 @@ export default function Home({ allPosts }: HomeProps) {
             />
           </ModalDialog>
           <ModalDialog isOpen={isNewPost} handleModalClose={handleModalClose} windowSize="wide">
-            <SuggestionModal />
+            <SuggestionModal handleFormSubmit={handleFormSubmit} />
           </ModalDialog>
           <ModalDialog isOpen={isPostView} handleModalClose={handleModalClose} windowSize="wide">
             <PostModal />
@@ -106,7 +127,12 @@ export default function Home({ allPosts }: HomeProps) {
             </div>
             <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
               <Link href={user ? '/?new-post' : '/?login'} as={user ? '/new-post' : '/login'}>
-                <button className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]">
+                <button
+                  className={`bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0] ${
+                    loading ? 'pointer-events-none hover:cursor-not-allowed' : ''
+                  }`}
+                  disabled={loading}
+                >
                   Make suggestion
                 </button>
               </Link>

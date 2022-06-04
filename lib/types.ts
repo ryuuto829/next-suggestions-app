@@ -23,7 +23,7 @@ export type Post = {
   title: string
   content: string
   status: 'active' | 'archived'
-  createdAt: Date
+  createdAt: string
   topic: string
   comments: Comment[]
 }

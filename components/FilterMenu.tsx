@@ -2,7 +2,7 @@ import { Menu } from '@headlessui/react'
 import { ChevronDownIcon } from '@primer/octicons-react'
 
 const menuOptions = [
-  { id: 0, name: 'All Topics / Reset', isSelectAll: true },
+  { id: 0, name: 'All Topics', isSelectAll: true },
   { id: 1, name: '💡 Feature Request', isSelectAll: false },
   { id: 2, name: '📝 Feedback', isSelectAll: false },
 ]
@@ -18,6 +18,7 @@ export default function FilterMenu() {
         <Menu.Items className="absolute right-0 sm:left-0 w-56 mt-1 py-1 bg-[color:var(--blue-charcoal-color)] rounded overflow-hidden">
           {menuOptions.map((option) => (
             <Menu.Item
+              as="div"
               key={option.id}
               className="flex items-center w-full hover:bg-[color:var(--light-blue-charcoal-color)] py-1.5 px-3 cursor-pointer"
             >

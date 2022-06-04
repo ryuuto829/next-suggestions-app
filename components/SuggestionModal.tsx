@@ -1,42 +1,84 @@
-import { Dialog } from '@headlessui/react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { Dialog, Listbox } from '@headlessui/react'
+import { useForm, Controller } from 'react-hook-form'
+import { FieldValues } from 'react-hook-form'
 
-export type SuggestionModalProps = {}
+export type SuggestionModalProps = {
+  handleFormSubmit: (data: FieldValues) => Promise<void>
+}
 
-export default function SuggestionForm({}: SuggestionModalProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
+const menuOptions = [
+  { id: 1, name: '💡 Feature Request' },
+  { id: 2, name: '📝 Feedback' },
+]
 
-  const onSubmit = (data) => console.log(data)
-  // console.log(errors)
+export default function SuggestionModal({ handleFormSubmit }: SuggestionModalProps) {
+  const { control, register, handleSubmit } = useForm()
+  const [topic, setTopic] = useState(menuOptions[0])
 
   return (
     <div>
       <Dialog.Title className="text-xl font-bold text-white sm:text-2xl w-full pb-6">
         Make a suggestion
       </Dialog.Title>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col text-left">
-        <label htmlFor="title" className="text-sm text-gray-400">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col text-left">
+        <label htmlFor="title" className="text-sm text-gray-400 font-medium">
           Title
         </label>
         <input
           id="title"
           type="text"
           placeholder="A short, descriptive title"
-          className="bg-transparent"
-          {...register('Title', { required: true, max: 150, min: 2, maxLength: 150 })}
+          className="bg-[color:var(--light-blue-charcoal-color)] rounded-md px-3 py-2 border border-gray-700 text-sm focus:border-gray-600 outline-none mt-1"
+          {...register('title', { required: true, max: 150, min: 2, maxLength: 150 })}
         />
-        <select {...register('Category', { required: true })} className="bg-transparent">
-          <option value="option1">option1</option>
-        </select>
+        <label htmlFor="topic" className="text-sm text-gray-400 font-medium mt-3">
+          Topic
+        </label>
+        <Controller
+          name="topic"
+          control={control}
+          render={({ field: { onChange, value, ...otherFields } }) => (
+            <Listbox
+              as="div"
+              id="topic"
+              value={topic}
+              className="mt-1 relative"
+              onChange={(post) => {
+                onChange(post.name)
+                setTopic(post)
+              }}
+              {...otherFields}
+            >
+              <Listbox.Button className="bg-[color:var(--light-blue-charcoal-color)] rounded-md border border-gray-700 w-full text-sm px-3 py-2 text-left focus:border-gray-600">
+                {topic.name}
+              </Listbox.Button>
+              <Listbox.Options className="absolute bg-[color:var(--light-blue-charcoal-color)] w-full mt-1 rounded-md px-3 py-2 text-sm border border-gray-700">
+                {menuOptions.map((post) => (
+                  <Listbox.Option key={post.id} value={post} className="cursor-pointer mt-1">
+                    {post.name}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Listbox>
+          )}
+        />
+        <label htmlFor="content" className="text-sm text-gray-400 font-medium mt-3">
+          Details
+        </label>
         <textarea
-          {...register('Content', { max: 1000, maxLength: 1000 })}
-          className="bg-transparent"
+          placeholder="Please include only one suggestion per post"
+          className="bg-[color:var(--light-blue-charcoal-color)] mt-1 rounded-md border border-gray-700 outline-none focus:border-gray-600 px-3 py-2 text-sm min-h-[9rem] resize-none"
+          {...register('content', { max: 1000, maxLength: 1000 })}
         />
-        <input type="submit" />
+        <div className="flex justify-end">
+          <button
+            className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-fit hover:bg-[#453fc0] mt-4"
+            onSubmit={handleFormSubmit}
+          >
+            Create post
+          </button>
+        </div>
       </form>
     </div>
   )
