@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { NextSeo } from 'next-seo'
 import { FieldValues } from 'react-hook-form'
 
 import SortingSelect from '@components/SortingSelect'
@@ -14,22 +15,22 @@ import EmptyNavigationBar from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
 import { useAuth } from '@lib/auth'
 import { createPost } from '@lib/db'
-// import { getAllPosts } from '@lib/db'
+import { getAllPosts } from '@lib/db'
 import { Post } from '@lib/types'
 
 export type HomeProps = {
   allPosts: Post[]
 }
 
-// export async function getStaticProps() {
-//   const { posts } = await getAllPosts()
+export async function getStaticProps() {
+  const { posts } = await getAllPosts()
 
-//   return {
-//     props: {
-//       allPosts: posts,
-//     },
-//   }
-// }
+  return {
+    props: {
+      allPosts: posts,
+    },
+  }
+}
 
 export default function Home({ allPosts }: HomeProps) {
   const router = useRouter()
@@ -39,17 +40,11 @@ export default function Home({ allPosts }: HomeProps) {
   const isNewPost = router.query['new-post'] === ''
   const isPostView = router.query.post !== undefined
 
-  const handleModalClose = () => {
-    router.push('/')
-  }
-
-  const handleSignInWithGoogle = async () => {
-    await signInWithGoogle('/')
-  }
-
-  const handleSignInWithGithub = async () => {
-    await signInWithGithub('/')
-  }
+  const postTitle = isPostView
+    ? allPosts.find((post) => post.id === router.query.post)?.title || null
+    : null
+  const loginTitle = isLogin ? 'Sign in' : null
+  const newPostTitle = isNewPost ? 'Make a suggestion' : null
 
   const handleRouteChange = () => {
     // 1. Redirect user to the main route if authenticated
@@ -70,8 +65,14 @@ export default function Home({ allPosts }: HomeProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading])
 
+  const handleModalClose = () => {
+    router.push('/')
+  }
+
   const handleFormSubmit = async (data: FieldValues) => {
     if (!user) return
+
+    console.log(data)
 
     const newSuggestion = {
       id: '1',
@@ -91,14 +92,19 @@ export default function Home({ allPosts }: HomeProps) {
 
   return (
     <>
+      <NextSeo
+        title={postTitle || loginTitle || newPostTitle || ''}
+        titleTemplate="%s | Next Suggestions App"
+      />
+
       {loading ? <EmptyNavigationBar /> : <NavigationBar />}
 
       {!loading && (
         <>
           <ModalDialog isOpen={isLogin} handleModalClose={handleModalClose}>
             <SigninModal
-              handleSignInWithGoogle={handleSignInWithGoogle}
-              handleSignInWithGithub={handleSignInWithGithub}
+              handleSignInWithGoogle={() => signInWithGoogle('/')}
+              handleSignInWithGithub={() => signInWithGithub('/')}
             />
           </ModalDialog>
           <ModalDialog isOpen={isNewPost} handleModalClose={handleModalClose} windowSize="wide">
@@ -113,7 +119,7 @@ export default function Home({ allPosts }: HomeProps) {
       <div className="pt-0 sm:pt-32">
         <main className="bg-[color:var(--dark-blue-charcoal-color)] max-w-2xl mx-auto rounded sm:min-h-full min-h-screen">
           <header className="sm:px-16 sm:py-12 px-5 pt-20 pb-11">
-            <h1 className="text-xl">📚 Next Suggestions App</h1>
+            <h1 className="text-xl">📝 Next Suggestions App</h1>
             <p className="text-sm text-gray-200 mt-2">
               Let us know how we can improve. Vote on existing ideas or suggest new ones.
             </p>

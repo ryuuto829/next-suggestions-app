@@ -38,6 +38,7 @@ export default function SuggestionModal({ handleFormSubmit }: SuggestionModalPro
         <Controller
           name="topic"
           control={control}
+          defaultValue={topic.name}
           render={({ field: { onChange, value, ...otherFields } }) => (
             <Listbox
               as="div"

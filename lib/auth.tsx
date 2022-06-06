@@ -1,16 +1,10 @@
 import { useState, useEffect, createContext, ReactNode, useContext } from 'react'
 import Router from 'next/router'
-import {
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged,
-  User as FirebaseUser,
-} from 'firebase/auth'
+import { signInWithPopup, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
 
-import { auth } from '@lib/firebase'
-import { createUser } from '@lib/db'
 import { User, CreateAuthContext } from '@lib/types'
+import { auth, providers } from '@lib/firebase'
+import { createUser } from '@lib/db'
 
 const authContext = createContext<CreateAuthContext>(undefined)
 
@@ -79,10 +73,9 @@ export function useProvideAuth() {
 
   const signInWithGoogle = async (redirect?: string) => {
     setLoading(true)
-    const googleProvider = new GoogleAuthProvider()
 
     try {
-      const response = await signInWithPopup(auth, googleProvider)
+      const response = await signInWithPopup(auth, providers.googleProvider)
       await handleUser(response.user)
     } catch (error: any) {
       handleClosedPopup(error.code)
@@ -95,10 +88,9 @@ export function useProvideAuth() {
 
   const signInWithGithub = async (redirect?: string) => {
     setLoading(true)
-    const githubProvider = new GithubAuthProvider()
 
     try {
-      const response = await signInWithPopup(auth, githubProvider)
+      const response = await signInWithPopup(auth, providers.githubProvider)
       await handleUser(response.user)
     } catch (error: any) {
       handleClosedPopup(error.code)

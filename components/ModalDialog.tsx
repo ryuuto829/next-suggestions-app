@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { Dialog } from '@headlessui/react'
+import { Fragment, ReactNode } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
 
 export type ModalDialogProps = {
   isOpen: boolean
@@ -36,24 +36,42 @@ export default function ModalDialog({
       onClose={handleModalClose}
       className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
     >
-      {/* Modal overlay */}
-      <div className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
-
-      {/* Modal content with close button */}
-      <Dialog.Panel
-        className={`relative flex flex-col bg-[color:var(--dark-blue-charcoal-color)] ${
-          windowSize === 'wide' ? 'max-w-2xl' : 'max-w-md'
-        } w-full text-center px-4 py-10 sm:px-8 z-10 m-5 rounded-md`}
+      <Transition
+        as={Fragment}
+        appear={true}
+        show={isOpen}
+        enter="transition duration-150 ease-in-out"
+        enterFrom="opacity-0 backdrop-blur-0"
+        enterTo="opacity-100 backdrop-blur-sm"
       >
-        <button
-          onClick={handleModalClose}
-          className="absolute right-2 top-2 text-[color:var(--dark-gray-charcoal-color)] bg-transparent hover:bg-[color:var(--light-blue-charcoal-color)] rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
-        >
-          <CloseIcon />
-        </button>
+        {/* Modal overlay */}
+        <div className="fixed inset-0 bg-black/25 backdrop-blur-sm back" />
+      </Transition>
 
-        {children}
-      </Dialog.Panel>
+      <Transition
+        as={Fragment}
+        appear={true}
+        show={isOpen}
+        enter="transform transition duration-150 ease-in-out"
+        enterFrom="translate-y-8 opacity-0"
+        enterTo="translate-y-0 opacity-100"
+      >
+        {/* Modal content with close button */}
+        <Dialog.Panel
+          className={`relative flex flex-col bg-[color:var(--dark-blue-charcoal-color)] ${
+            windowSize === 'wide' ? 'max-w-2xl' : 'max-w-md'
+          } w-full text-center px-4 py-10 sm:px-8 z-10 m-5 rounded-md`}
+        >
+          <button
+            onClick={handleModalClose}
+            className="absolute right-2 top-2 text-[color:var(--dark-gray-charcoal-color)] bg-transparent hover:bg-[color:var(--light-blue-charcoal-color)] rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
+          >
+            <CloseIcon />
+          </button>
+
+          {children}
+        </Dialog.Panel>
+      </Transition>
     </Dialog>
   )
 }

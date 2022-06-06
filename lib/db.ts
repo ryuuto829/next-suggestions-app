@@ -1,8 +1,8 @@
-import { compareAsc, parseISO } from 'date-fns'
+import { compareDesc, parseISO } from 'date-fns'
 import { doc, collection, setDoc, addDoc, getDocs, query, where } from 'firebase/firestore'
 
-import { db } from '@lib/firebase'
 import { User, Post } from '@lib/types'
+import { db } from '@lib/firebase'
 
 export const createUser = async (uid: string, data: User) => {
   return await setDoc(doc(db, 'users', uid), { uid, ...data }, { merge: true })
@@ -20,7 +20,7 @@ export const getAllPosts = async () => {
       posts.push({ ...postData, id: post.id })
     })
 
-    posts.sort((a, b) => compareAsc(parseISO(a.createdAt), parseISO(b.createdAt)))
+    posts.sort((a, b) => compareDesc(parseISO(a.createdAt), parseISO(b.createdAt)))
 
     return { posts }
   } catch (error) {
