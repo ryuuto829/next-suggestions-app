@@ -21,9 +21,12 @@ export default function Suggestion({ post }: SuggestionProps) {
           </div>
           <span className="text-sm text-gray-200 mt-2 block">{post.content}</span>
           <div className="flex items-center mt-2.5">
-            <span className="text-xs px-2 py-1 bg-[color:var(--blue-charcoal-color)] hover:bg-[color:var(--light-blue-charcoal-color)] rounded mr-4">
-              {post.topic}
-            </span>
+            {post.topic !== '-' && (
+              <span className="text-xs px-2 py-1 bg-[color:var(--blue-charcoal-color)] rounded mr-4">
+                {post.topic}
+              </span>
+            )}
+
             {post.comments.length !== 0 && (
               <span className="flex items-center text-[color:var(--dark-gray-charcoal-color)] text-sm">
                 <CommentIcon size={16} className="mr-1" />

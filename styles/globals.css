@@ -10,3 +10,8 @@
   --purple-color: #4f46e5;
   --dark-gray-charcoal-color: #b2b8cd;
 }
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}

@@ -1,13 +1,6 @@
 import { Fragment, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-export type ModalDialogProps = {
-  isOpen: boolean
-  handleModalClose: () => void
-  children?: ReactNode
-  windowSize?: 'wide'
-}
-
 export const CloseIcon = () => (
   <svg
     className="w-5 h-5"
@@ -22,6 +15,13 @@ export const CloseIcon = () => (
     ></path>
   </svg>
 )
+
+export type ModalDialogProps = {
+  isOpen: boolean
+  handleModalClose: () => void
+  children?: ReactNode
+  windowSize?: 'wide'
+}
 
 export default function ModalDialog({
   isOpen,
@@ -47,7 +47,6 @@ export default function ModalDialog({
         {/* Modal overlay */}
         <div className="fixed inset-0 bg-black/25 backdrop-blur-sm back" />
       </Transition>
-
       <Transition
         as={Fragment}
         appear={true}
@@ -56,7 +55,7 @@ export default function ModalDialog({
         enterFrom="translate-y-8 opacity-0"
         enterTo="translate-y-0 opacity-100"
       >
-        {/* Modal content with close button */}
+        {/* Modal content */}
         <Dialog.Panel
           className={`relative flex flex-col bg-[color:var(--dark-blue-charcoal-color)] ${
             windowSize === 'wide' ? 'max-w-2xl' : 'max-w-md'

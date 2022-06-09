@@ -21,7 +21,7 @@ export default function SortingSelect() {
             <CodeIcon size={16} className="rotate-90 h-4 w-4" aria-hidden="true" />
           </span>
         </Listbox.Button>
-        <Listbox.Options className="absolute mt-1 py-1 bg-[color:var(--blue-charcoal-color)] w-full rounded overflow-hidden">
+        <Listbox.Options className="absolute mt-1 py-1 bg-[color:var(--blue-charcoal-color)] w-full rounded overflow-hidden border border-gray-500/10">
           {selectOptions.map((option, key) => (
             <Listbox.Option
               key={key}
