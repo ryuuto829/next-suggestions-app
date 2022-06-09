@@ -5,7 +5,6 @@ import { NextSeo } from 'next-seo'
 import { FieldValues } from 'react-hook-form'
 
 import SortingSelect from '@components/SortingSelect'
-import FilterMenu from '@components/FilterMenu'
 import NavigationBar from '@components/NavigationBar'
 import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
@@ -72,8 +71,6 @@ export default function Home({ allPosts }: HomeProps) {
   const handleFormSubmit = async (data: FieldValues) => {
     if (!user) return
 
-    console.log(data)
-
     const newSuggestion = {
       id: '1',
       autor: user.name,
@@ -99,21 +96,33 @@ export default function Home({ allPosts }: HomeProps) {
 
       {loading ? <EmptyNavigationBar /> : <NavigationBar />}
 
-      {!loading && (
-        <>
-          <ModalDialog isOpen={isLogin} handleModalClose={handleModalClose}>
-            <SigninModal
-              handleSignInWithGoogle={() => signInWithGoogle('/')}
-              handleSignInWithGithub={() => signInWithGithub('/')}
-            />
-          </ModalDialog>
-          <ModalDialog isOpen={isNewPost} handleModalClose={handleModalClose} windowSize="wide">
-            <SuggestionModal handleFormSubmit={handleFormSubmit} />
-          </ModalDialog>
-          <ModalDialog isOpen={isPostView} handleModalClose={handleModalClose} windowSize="wide">
-            <PostModal />
-          </ModalDialog>
-        </>
+      {isLogin && (
+        <ModalDialog isOpen={isLogin && !loading} handleModalClose={handleModalClose}>
+          <SigninModal
+            handleSignInWithGoogle={() => signInWithGoogle('/')}
+            handleSignInWithGithub={() => signInWithGithub('/')}
+          />
+        </ModalDialog>
+      )}
+
+      {isNewPost && (
+        <ModalDialog
+          isOpen={isNewPost && !loading}
+          handleModalClose={handleModalClose}
+          windowSize="wide"
+        >
+          <SuggestionModal handleFormSubmit={handleFormSubmit} />
+        </ModalDialog>
+      )}
+
+      {isPostView && allPosts && (
+        <ModalDialog
+          isOpen={isPostView && !loading}
+          handleModalClose={handleModalClose}
+          windowSize="wide"
+        >
+          <PostModal post={allPosts.find((post) => post.id === router.query.post)} />
+        </ModalDialog>
       )}
 
       <div className="pt-0 sm:pt-32">
@@ -124,13 +133,8 @@ export default function Home({ allPosts }: HomeProps) {
               Let us know how we can improve. Vote on existing ideas or suggest new ones.
             </p>
           </header>
-          <div className="flex justify-between items-center sticky top-0 left-0 bg-[color:var(--dark-blue-charcoal-color)] sm:px-16 px-5 py-3">
-            <div className="flex justify-between items-center">
-              <div className="mr-3">
-                <SortingSelect />
-              </div>
-              <FilterMenu />
-            </div>
+          <div className="flex justify-between items-center sticky top-0 left-0 sm:px-16 px-5 py-3 bg-[color:var(--blue-charcoal-color)] border border-gray-500/10">
+            <SortingSelect />
             <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
               <Link href={user ? '/?new-post' : '/?login'} as={user ? '/new-post' : '/login'}>
                 <button
