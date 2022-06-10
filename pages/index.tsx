@@ -13,8 +13,7 @@ import ModalDialog from '@components/ModalDialog'
 import EmptyNavigationBar from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
 import { useAuth } from '@lib/auth'
-import { createPost } from '@lib/db'
-import { getAllPosts } from '@lib/db'
+import { createPost, getAllPosts } from '@lib/db'
 import { Post } from '@lib/types'
 
 export type HomeProps = {
@@ -73,8 +72,9 @@ export default function Home({ allPosts }: HomeProps) {
 
     const newSuggestion = {
       id: '1',
-      autor: user.name,
+      author: user.name,
       authorId: user.uid,
+      authorPhotoURL: user.photoURL,
       title: data.title,
       topic: data.topic,
       content: data.content.replace('\n', '\n\n'),

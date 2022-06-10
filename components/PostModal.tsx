@@ -1,5 +1,6 @@
 import { Dialog } from '@headlessui/react'
 import { ChevronUpIcon } from '@primer/octicons-react'
+import Image from 'next/image'
 
 import { Post } from '@lib/types'
 
@@ -15,6 +16,7 @@ export default function PostModal({ post }: PostModalProps) {
   return (
     <>
       <Dialog.Title className="text-xl text-left">{post.title}</Dialog.Title>
+
       <div className="flex text-left mt-6">
         <span className="w-24 sm:w-36 text-sm text-[color:var(--dark-gray-charcoal-color)]">
           Category
@@ -27,6 +29,24 @@ export default function PostModal({ post }: PostModalProps) {
             {post.topic}
           </span>
         )}
+      </div>
+      <div className="flex items-center text-left mt-3">
+        <span className="w-24 sm:w-36 text-sm text-[color:var(--dark-gray-charcoal-color)]">
+          Author
+        </span>
+
+        {post.authorPhotoURL && (
+          <div className="flex items-center justify-center mr-2">
+            <Image
+              src={post.authorPhotoURL}
+              alt="User avatar"
+              width={24}
+              height={24}
+              className="w-6 h-6 rounded-full"
+            />
+          </div>
+        )}
+        <span className="text-sm text-gray-200">{post.author || 'Anonymous'}</span>
       </div>
 
       <div className="mt-6 text-left text-gray-400">{post.content}</div>

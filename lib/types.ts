@@ -19,7 +19,8 @@ export type CreateAuthContext = ReturnType<typeof useProvideAuth> | undefined
 export type Post = {
   id: string
   authorId: string
-  autor: string
+  author: string
+  authorPhotoURL: string
   title: string
   content: string
   status: 'active' | 'archived'
