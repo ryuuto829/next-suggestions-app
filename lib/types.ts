@@ -26,6 +26,7 @@ export type Post = {
   status: 'active' | 'archived'
   createdAt: string
   topic: string
+  upvoteCount: number
   comments: Comment[]
 }
 

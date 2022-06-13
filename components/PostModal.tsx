@@ -6,9 +6,11 @@ import { Post } from '@lib/types'
 
 export type PostModalProps = {
   post: Post | undefined
+  isUpvoted: boolean
+  handleUpvotes: (a: boolean, b: string) => void
 }
 
-export default function PostModal({ post }: PostModalProps) {
+export default function PostModal({ post, isUpvoted, handleUpvotes }: PostModalProps) {
   if (!post) {
     return <div>No post found</div>
   }
@@ -54,10 +56,13 @@ export default function PostModal({ post }: PostModalProps) {
       <div className="flex justify-between items-center sticky top-0 left-0 sm:px-16 px-5 py-3 bg-[color:var(--blue-charcoal-color)] border border-gray-500/10 mt-12">
         <div className="flex justify-between items-center"></div>
         <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
-          <button className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]">
+          <button
+            className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]"
+            onClick={() => handleUpvotes(isUpvoted, post.id)}
+          >
             <ChevronUpIcon size={16} className="mr-2" />
             <span className="mr-2">Upvote</span>
-            <span>0</span>
+            <span>{post.upvoteCount}</span>
           </button>
         </div>
       </div>
