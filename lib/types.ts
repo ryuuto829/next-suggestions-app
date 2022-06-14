@@ -3,6 +3,7 @@ import { useProvideAuth } from '@lib/auth'
 /**
  * User authentication
  */
+
 export type User = {
   uid: string
   email: string | null
@@ -14,8 +15,9 @@ export type User = {
 export type CreateAuthContext = ReturnType<typeof useProvideAuth> | undefined
 
 /**
- * Suggestion posts
+ * Suggestion post & upvotes
  */
+
 export type Post = {
   id: string
   authorId: string
@@ -27,12 +29,12 @@ export type Post = {
   createdAt: string
   topic: string
   upvoteCount: number
-  comments: Comment[]
 }
 
-export type Comment = {
-  content: string
-  author: string
-  authorId: string
-  createdAt: Date
-}
+export type Upvotes = { [uid: string]: true }[] | undefined
+
+/**
+ * Other
+ */
+
+export type SortingName = 'Recent' | 'Most voted'

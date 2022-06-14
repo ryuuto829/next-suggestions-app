@@ -1,13 +1,11 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { NextSeo } from 'next-seo'
+import { compareDesc, parseISO } from 'date-fns'
 import { FieldValues } from 'react-hook-form'
-
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { collection, doc } from 'firebase/firestore'
-import { db } from '@lib/firebase'
-import { compareDesc, parseISO } from 'date-fns'
 
 import SortingSelect from '@components/SortingSelect'
 import NavigationBar from '@components/NavigationBar'
@@ -17,49 +15,40 @@ import PostModal from '@components/PostModal'
 import ModalDialog from '@components/ModalDialog'
 import EmptyNavigationBar from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
+import { db } from '@lib/firebase'
 import { useAuth } from '@lib/auth'
-import {
-  createPost,
-  // getAllPosts
-} from '@lib/db'
-import { Post } from '@lib/types'
-import { addUpvote, removeUpvote } from '@lib/db'
-
-// export type HomeProps = {
-//   allPosts: Post[]
-// }
-
-// export async function getStaticProps() {
-//   const { posts } = await getAllPosts()
-
-//   return {
-//     props: {
-//       allPosts: posts,
-//     },
-//   }
-// }
+import { createPost, addUpvote, removeUpvote } from '@lib/db'
+import { Post, Upvotes, SortingName } from '@lib/types'
 
 export default function Home() {
   const router = useRouter()
   const { user, loading, signInWithGoogle, signInWithGithub } = useAuth()
+  const [sorting, setSorting] = useState<SortingName>('Recent')
+  const [upvotesData] = useDocument(user ? doc(db, 'upvotes', user?.uid) : null)
+  const [postsData] = useCollection(collection(db, 'posts'))
 
-  const [upvotes] = useDocument(user ? doc(db, 'upvotes', user?.uid) : null)
+  const upvotes = upvotesData?.data() as Upvotes
 
-  const [posts] = useCollection(collection(db, 'posts'))
-  const allPosts = useMemo(() => {
-    if (!posts) return null
+  const posts = useMemo<Post[] | null>(() => {
+    if (!postsData) return null
 
-    const postsData = posts.docs.map((doc) => doc.data())
+    const posts = postsData.docs.map((doc) => doc.data()) as Post[]
 
-    return postsData.sort((a, b) => compareDesc(parseISO(a.createdAt), parseISO(b.createdAt)))
-  }, [posts])
+    switch (sorting) {
+      case 'Recent':
+        return posts.sort((a, b) => compareDesc(parseISO(a.createdAt), parseISO(b.createdAt)))
+
+      case 'Most voted':
+        return posts.sort((a, b) => b.upvoteCount - a.upvoteCount)
+    }
+  }, [postsData, sorting])
 
   const isLogin = router.query.login === ''
   const isNewPost = router.query['new-post'] === ''
   const isPostView = router.query.post !== undefined
 
   const postTitle = isPostView
-    ? allPosts?.find((post) => post.id === router.query.post)?.title || null
+    ? posts?.find((post) => post.id === router.query.post)?.title || null
     : null
   const loginTitle = isLogin ? 'Sign in' : null
   const newPostTitle = isNewPost ? 'Make a suggestion' : null
@@ -91,7 +80,7 @@ export default function Home() {
     if (!user) return
 
     const newSuggestion = {
-      id: '1',
+      id: '',
       author: user.name,
       authorId: user.uid,
       authorPhotoURL: user.photoURL,
@@ -148,16 +137,16 @@ export default function Home() {
         </ModalDialog>
       )}
 
-      {isPostView && allPosts && (
+      {isPostView && posts && (
         <ModalDialog
           isOpen={isPostView && !loading}
           handleModalClose={handleModalClose}
           windowSize="wide"
         >
           <PostModal
-            post={allPosts.find((post) => post.id === router.query.post)}
+            post={posts && posts.find((post) => post.id === router.query.post)}
             handleUpvotes={handleUpvotes}
-            isUpvoted={upvotes?.data() ? upvotes?.data()[router.query.post] : false}
+            isUpvoted={upvotes ? upvotes[router.query.post] : false}
           />
         </ModalDialog>
       )}
@@ -171,7 +160,7 @@ export default function Home() {
             </p>
           </header>
           <div className="flex justify-between items-center sticky top-0 left-0 sm:px-16 px-5 py-3 bg-[color:var(--blue-charcoal-color)] border border-gray-500/10">
-            <SortingSelect />
+            <SortingSelect sorting={sorting} handleSorting={setSorting} />
             <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
               <Link href={user ? '/?new-post' : '/?login'} as={user ? '/new-post' : '/login'}>
                 <button
@@ -186,13 +175,13 @@ export default function Home() {
             </div>
           </div>
           <div className="px-5 sm:px-16 sm:py-8 py-6">
-            {allPosts &&
-              allPosts.map((post) => (
+            {posts &&
+              posts.map((post) => (
                 <Suggestion
                   key={post.id}
                   post={post}
                   handleUpvotes={handleUpvotes}
-                  isUpvoted={upvotes?.data() ? upvotes?.data()[post.id] : false}
+                  isUpvoted={upvotes ? upvotes[post.id] : false}
                 />
               ))}
           </div>
