@@ -6,6 +6,7 @@ import { compareDesc, parseISO } from 'date-fns'
 import { FieldValues } from 'react-hook-form'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { collection, doc } from 'firebase/firestore'
+import { toast } from 'react-toastify'
 
 import SortingSelect from '@components/SortingSelect'
 import NavigationBar from '@components/NavigationBar'
@@ -13,7 +14,7 @@ import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
 import PostModal from '@components/PostModal'
 import ModalDialog from '@components/ModalDialog'
-import EmptyNavigationBar from '@components/EmptyNavigationBar'
+import { EmptyPosts, EmptyNavigationBar } from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
 import { db } from '@lib/firebase'
 import { useAuth } from '@lib/auth'
@@ -94,7 +95,9 @@ export default function Home() {
     } as Post
 
     await createPost(newSuggestion)
+
     handleModalClose()
+    toast('Add new suggestion!', { theme: 'dark' })
   }
 
   const handleUpvotes = async (isUpvoted: boolean, postID: string) => {
@@ -175,7 +178,7 @@ export default function Home() {
             </div>
           </div>
           <div className="px-5 sm:px-16 sm:py-8 py-6">
-            {posts &&
+            {posts ? (
               posts.map((post) => (
                 <Suggestion
                   key={post.id}
@@ -183,7 +186,10 @@ export default function Home() {
                   handleUpvotes={handleUpvotes}
                   isUpvoted={upvotes ? upvotes[post.id] : false}
                 />
-              ))}
+              ))
+            ) : (
+              <EmptyPosts />
+            )}
           </div>
         </main>
       </div>

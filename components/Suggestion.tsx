@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ChevronUpIcon, CommentIcon } from '@primer/octicons-react'
+import { ChevronUpIcon } from '@primer/octicons-react'
 
 import { Post } from '@lib/types'
 
@@ -26,13 +26,6 @@ export default function Suggestion({ post, isUpvoted, handleUpvotes }: Suggestio
             {post.topic !== '-' && (
               <span className="text-xs px-2 py-1 bg-[color:var(--blue-charcoal-color)] rounded mr-4">
                 {post.topic}
-              </span>
-            )}
-
-            {post.comments.length !== 0 && (
-              <span className="flex items-center text-[color:var(--dark-gray-charcoal-color)] text-sm">
-                <CommentIcon size={16} className="mr-1" />
-                <span>{post.comments.length}</span>
               </span>
             )}
           </div>
