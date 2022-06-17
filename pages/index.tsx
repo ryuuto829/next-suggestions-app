@@ -23,7 +23,7 @@ import { Post, Upvotes, SortingName } from '@lib/types'
 
 export default function Home() {
   const router = useRouter()
-  const { user, loading, signInWithGoogle, signInWithGithub } = useAuth()
+  const { user, loading, signInWithGoogle, signInWithGithub, signInWithDemo } = useAuth()
   const [sorting, setSorting] = useState<SortingName>('Recent')
   const [upvotesData] = useDocument(user ? doc(db, 'upvotes', user?.uid) : null)
   const [postsData] = useCollection(collection(db, 'posts'))
@@ -126,6 +126,7 @@ export default function Home() {
           <SigninModal
             handleSignInWithGoogle={() => signInWithGoogle('/')}
             handleSignInWithGithub={() => signInWithGithub('/')}
+            handleSignInWithDemo={() => signInWithDemo('/')}
           />
         </ModalDialog>
       )}

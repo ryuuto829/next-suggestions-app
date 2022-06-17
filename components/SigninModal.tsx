@@ -17,11 +17,13 @@ export const GoogleIcon = () => (
 export type SigninModalProps = {
   handleSignInWithGoogle: () => Promise<void>
   handleSignInWithGithub: () => Promise<void>
+  handleSignInWithDemo: () => Promise<void>
 }
 
 export default function SigninModal({
   handleSignInWithGoogle,
   handleSignInWithGithub,
+  handleSignInWithDemo,
 }: SigninModalProps) {
   return (
     <>
@@ -67,7 +69,7 @@ export default function SigninModal({
         {/* Sign in with a Demo Account */}
         <button
           className="relative flex justify-center items-center w-full bg-[color:var(--blue-charcoal-color)] border border-[color:var(--blue-charcoal-color)] text-gray-200 rounded-md hover:bg-[color:var(--light-blue-charcoal-color)] px-4 py-2 text-sm mt-2"
-          onClick={handleSignInWithGoogle}
+          onClick={handleSignInWithDemo}
         >
           <span>Continue with a Demo Account</span>
         </button>

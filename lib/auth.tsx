@@ -1,6 +1,11 @@
 import { useState, useEffect, createContext, ReactNode, useContext } from 'react'
 import Router from 'next/router'
-import { signInWithPopup, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
+import {
+  signInWithPopup,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  User as FirebaseUser,
+} from 'firebase/auth'
 
 import { User, CreateAuthContext } from '@lib/types'
 import { auth, providers } from '@lib/firebase'
@@ -108,5 +113,20 @@ export function useProvideAuth() {
     await handleUser(null)
   }
 
-  return { user, loading, signInWithGoogle, signInWithGithub, signOut }
+  const signInWithDemo = async (redirect?: string) => {
+    setLoading(true)
+
+    const response = await signInWithEmailAndPassword(
+      auth,
+      'testuser@example.com',
+      'suggest1ons1234',
+    )
+    await handleUser(response.user)
+
+    if (redirect) {
+      Router.push(redirect)
+    }
+  }
+
+  return { user, loading, signInWithGoogle, signInWithGithub, signOut, signInWithDemo }
 }
