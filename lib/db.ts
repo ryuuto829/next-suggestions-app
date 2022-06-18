@@ -3,10 +3,13 @@ import {
   collection,
   setDoc,
   addDoc,
+  getDoc,
   increment,
   writeBatch,
   deleteField,
+  deleteDoc,
 } from 'firebase/firestore'
+import Router from 'next/router'
 
 import { User, Post } from '@lib/types'
 import { db } from '@lib/firebase'
@@ -42,4 +45,22 @@ export const removeUpvote = async (postId: string, uid: string) => {
   batch.update(upvotesRef, { [postId]: deleteField() })
 
   await batch.commit()
+}
+
+export const removePost = async (postId: string) => {
+  const postRef = doc(db, 'posts', postId)
+  await deleteDoc(postRef)
+
+  Router.push('/')
+}
+
+export const getUserRole = async (uid: string | undefined) => {
+  if (uid) {
+    const rolesRef = doc(db, 'roles', uid)
+    const userRoleSnapshot = await getDoc(rolesRef)
+
+    return userRoleSnapshot.data()?.role
+  }
+
+  return null
 }

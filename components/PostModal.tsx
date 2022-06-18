@@ -1,8 +1,10 @@
 import { Dialog } from '@headlessui/react'
-import { ChevronUpIcon } from '@primer/octicons-react'
+import { ChevronUpIcon, TrashIcon } from '@primer/octicons-react'
 import Image from 'next/image'
 
+import { useAuth } from '@lib/auth'
 import { Post } from '@lib/types'
+import { removePost } from '@lib/db'
 
 export type PostModalProps = {
   post: Post | undefined
@@ -11,6 +13,9 @@ export type PostModalProps = {
 }
 
 export default function PostModal({ post, isUpvoted, handleUpvotes }: PostModalProps) {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
+
   if (!post) {
     return <div>No post found</div>
   }
@@ -54,7 +59,18 @@ export default function PostModal({ post, isUpvoted, handleUpvotes }: PostModalP
       <div className="mt-6 text-left text-gray-400">{post.content}</div>
 
       <div className="flex justify-between items-center sticky top-0 left-0 sm:px-16 px-5 py-3 bg-[color:var(--blue-charcoal-color)] border border-gray-500/10 mt-12">
-        <div className="flex justify-between items-center"></div>
+        {isAdmin && (
+          <div className="flex justify-between items-center">
+            <button
+              className="rounded w-full bg-[color:var(--blue-charcoal-color)] hover:bg-[color:var(--light-blue-charcoal-color)] py-1.5 px-3 cursor-pointer text-[color:var(--dark-gray-charcoal-color)] text-sm"
+              onClick={() => removePost(post.id)}
+            >
+              <TrashIcon size={16} className="mr-2" />
+              <span>Delete</span>
+            </button>
+          </div>
+        )}
+
         <div className="fixed bottom-0 left-0 w-full p-5 sm:p-0 sm:static sm:w-auto">
           <button
             className="bg-[color:var(--purple-color)] py-2 px-4 rounded text-sm w-full hover:bg-[#453fc0]"

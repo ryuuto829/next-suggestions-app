@@ -4,12 +4,13 @@ import {
   signInWithPopup,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  updateProfile,
   User as FirebaseUser,
 } from 'firebase/auth'
 
 import { User, CreateAuthContext } from '@lib/types'
 import { auth, providers } from '@lib/firebase'
-import { createUser } from '@lib/db'
+import { createUser, getUserRole } from '@lib/db'
 
 const authContext = createContext<CreateAuthContext>(undefined)
 
@@ -38,7 +39,7 @@ export function useProvideAuth() {
 
   const handleUser = async (userRaw: FirebaseUser | null) => {
     if (userRaw) {
-      const user = formatUser(userRaw)
+      const user = await formatUser(userRaw)
 
       await createUser(user.uid, user)
 
@@ -53,14 +54,6 @@ export function useProvideAuth() {
       return null
     }
   }
-
-  const formatUser = (user: FirebaseUser) => ({
-    uid: user.uid,
-    email: user.email,
-    name: user.displayName,
-    provider: user.providerData[0].providerId,
-    photoURL: user.photoURL,
-  })
 
   const handleClosedPopup = async (errorCode: string) => {
     if (errorCode === 'auth/popup-closed-by-user') {
@@ -116,12 +109,18 @@ export function useProvideAuth() {
   const signInWithDemo = async (redirect?: string) => {
     setLoading(true)
 
-    const response = await signInWithEmailAndPassword(
-      auth,
-      'testuser@example.com',
-      'suggest1ons1234',
-    )
-    await handleUser(response.user)
+    try {
+      const response = await signInWithEmailAndPassword(
+        auth,
+        'testuser@example.com',
+        'suggest1ons1234',
+      )
+
+      await updateProfile(response.user, { displayName: 'Jane Q. User', photoURL: null })
+      await handleUser(response.user)
+    } catch (error) {
+      handleUser(null)
+    }
 
     if (redirect) {
       Router.push(redirect)
@@ -129,4 +128,17 @@ export function useProvideAuth() {
   }
 
   return { user, loading, signInWithGoogle, signInWithGithub, signOut, signInWithDemo }
+}
+
+const formatUser = async (user: FirebaseUser) => {
+  const uid = auth.currentUser?.uid
+
+  return {
+    uid: user.uid,
+    email: user.email,
+    name: user.displayName,
+    provider: user.providerData[0].providerId,
+    photoURL: user.photoURL,
+    role: await getUserRole(uid),
+  }
 }

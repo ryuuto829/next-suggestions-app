@@ -10,6 +10,7 @@ export type User = {
   name: string | null
   provider: string
   photoURL: string | null
+  role: 'admin' | 'test' | null
 } | null
 
 export type CreateAuthContext = ReturnType<typeof useProvideAuth> | undefined
