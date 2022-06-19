@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Dialog, Listbox } from '@headlessui/react'
-import { useForm, Controller } from 'react-hook-form'
-import { FieldValues } from 'react-hook-form'
+import { useForm, Controller, FieldValues } from 'react-hook-form'
 
 export type SuggestionModalProps = {
   handleFormSubmit: (data: FieldValues) => Promise<void>

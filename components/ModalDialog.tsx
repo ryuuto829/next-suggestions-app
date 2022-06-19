@@ -67,7 +67,6 @@ export default function ModalDialog({
           >
             <CloseIcon />
           </button>
-
           {children}
         </Dialog.Panel>
       </Transition>

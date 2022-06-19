@@ -8,17 +8,18 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { collection, doc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 
+import { db } from '@lib/firebase'
+import { useAuth } from '@lib/auth'
+import { createPost, addUpvote, removeUpvote } from '@lib/db'
+
 import SortingSelect from '@components/SortingSelect'
 import NavigationBar from '@components/NavigationBar'
 import SigninModal from '@components/SigninModal'
 import SuggestionModal from '@components/SuggestionModal'
 import PostModal from '@components/PostModal'
 import ModalDialog from '@components/ModalDialog'
-import { EmptyPosts, EmptyNavigationBar } from '@components/EmptyNavigationBar'
 import Suggestion from '@components/Suggestion'
-import { db } from '@lib/firebase'
-import { useAuth } from '@lib/auth'
-import { createPost, addUpvote, removeUpvote } from '@lib/db'
+import { EmptyPosts, EmptyNavigationBar } from '@components/EmptyNavigationBar'
 import { Post, Upvotes, SortingName } from '@lib/types'
 
 export default function Home() {
@@ -30,7 +31,7 @@ export default function Home() {
 
   const upvotes = upvotesData?.data() as Upvotes
 
-  const posts = useMemo<Post[] | null>(() => {
+  const posts = useMemo<Post[] | undefined | null>(() => {
     if (!postsData) return null
 
     const posts = postsData.docs.map((doc) => doc.data()) as Post[]
@@ -97,7 +98,7 @@ export default function Home() {
     await createPost(newSuggestion)
 
     handleModalClose()
-    toast('Add new suggestion!', { theme: 'dark' })
+    toast('A new suggestion added!', { theme: 'dark' })
   }
 
   const handleUpvotes = async (isUpvoted: boolean, postID: string) => {
@@ -180,14 +181,20 @@ export default function Home() {
           </div>
           <div className="px-5 sm:px-16 sm:py-8 py-6">
             {posts ? (
-              posts.map((post) => (
-                <Suggestion
-                  key={post.id}
-                  post={post}
-                  handleUpvotes={handleUpvotes}
-                  isUpvoted={upvotes ? upvotes[post.id] : false}
-                />
-              ))
+              posts.length !== 0 ? (
+                posts.map((post) => (
+                  <Suggestion
+                    key={post.id}
+                    post={post}
+                    handleUpvotes={handleUpvotes}
+                    isUpvoted={upvotes ? upvotes[post.id] : false}
+                  />
+                ))
+              ) : (
+                <div className="text-[color:var(--dark-gray-charcoal-color)] text-center py-8">
+                  Be first to add a new suggestion!
+                </div>
+              )
             ) : (
               <EmptyPosts />
             )}

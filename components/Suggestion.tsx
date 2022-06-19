@@ -16,12 +16,11 @@ export default function Suggestion({ post, isUpvoted, handleUpvotes }: Suggestio
       className="flex sm:items-center items-start justify-between sm:flex-row flex-col py-4"
     >
       <Link href={`/?post=${post.id}`} as={`/post/${post.id}`}>
-        <div className="cursor-pointer w-full">
+        <div className="cursor-pointer w-full mr-2">
           <div className="flex items-center">
-            <h2 className="font-medium">{post.title}</h2>
-            <span className="mx-2 text-[color:var(--dark-gray-charcoal-color)]">{`#${post.id}`}</span>
+            <h2 className="font-medium line-clamp-2">{post.title}</h2>
           </div>
-          <span className="text-sm text-gray-200 mt-2 block">{post.content}</span>
+          <span className="text-sm text-gray-200 mt-2 block line-clamp-2">{post.content}</span>
           <div className="flex items-center mt-2.5">
             {post.topic !== '-' && (
               <span className="text-xs px-2 py-1 bg-[color:var(--blue-charcoal-color)] rounded mr-4">

@@ -38,4 +38,4 @@ export type Upvotes = { [uid: string]: true }[] | undefined
  * Other
  */
 
-export type SortingName = 'Recent' | 'Most voted'
+export type SortingName = string | 'Recent' | 'Most voted'

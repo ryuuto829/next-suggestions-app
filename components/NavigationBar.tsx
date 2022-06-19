@@ -28,13 +28,11 @@ export default function NavigationBar() {
           )}
         </div>
       ) : (
-        <>
-          <Link href="/?login" as="/login">
-            <button className="rounded w-full bg-[color:var(--blue-charcoal-color)] hover:bg-[color:var(--light-blue-charcoal-color)] py-1.5 px-3 cursor-pointer text-[color:var(--dark-gray-charcoal-color)] font-medium text-sm">
-              Sign in
-            </button>
-          </Link>
-        </>
+        <Link href="/?login" as="/login">
+          <button className="rounded w-full bg-[color:var(--blue-charcoal-color)] hover:bg-[color:var(--light-blue-charcoal-color)] py-1.5 px-3 cursor-pointer text-[color:var(--dark-gray-charcoal-color)] font-medium text-sm">
+            Sign in
+          </button>
+        </Link>
       )}
     </div>
   )

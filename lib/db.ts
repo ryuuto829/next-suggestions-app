@@ -55,10 +55,12 @@ export const removePost = async (postId: string) => {
 }
 
 export const getUserRole = async (uid: string | undefined) => {
-  if (uid) {
-    const rolesRef = doc(db, 'roles', uid)
-    const userRoleSnapshot = await getDoc(rolesRef)
+  if (!uid) return null
 
+  const rolesRef = doc(db, 'roles', uid)
+  const userRoleSnapshot = await getDoc(rolesRef)
+
+  if (userRoleSnapshot.exists()) {
     return userRoleSnapshot.data()?.role
   }
 
