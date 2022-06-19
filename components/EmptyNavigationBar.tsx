@@ -13,7 +13,7 @@ export function EmptyNavigationBar() {
 export function EmptyPosts() {
   return (
     <>
-      {[...Array(3).keys()].map((id) => (
+      {Array.from(Array(3).keys()).map((id) => (
         <div
           key={id}
           className="animate-pulse flex sm:items-center items-start justify-between sm:flex-row flex-col py-4"
