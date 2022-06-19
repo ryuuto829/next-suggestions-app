@@ -15,8 +15,8 @@ const SEO = {
       {
         url: 'https://example.com/og.png',
         alt: title,
-        width: 1280,
-        height: 720,
+        width: 1200,
+        height: 630,
       },
     ],
   },
