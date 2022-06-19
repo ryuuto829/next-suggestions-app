@@ -32,7 +32,7 @@ export type Post = {
   upvoteCount: number
 }
 
-export type Upvotes = { [uid: string]: true }[] | undefined
+export type Upvotes = { [uid: string]: true } | undefined
 
 /**
  * Other

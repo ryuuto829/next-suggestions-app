@@ -48,6 +48,7 @@ export default function Home() {
   const isLogin = router.query.login === ''
   const isNewPost = router.query['new-post'] === ''
   const isPostView = router.query.post !== undefined
+  const currentPost = router.query.post as string | undefined
 
   const postTitle = isPostView
     ? posts?.find((post) => post.id === router.query.post)?.title || null
@@ -151,7 +152,7 @@ export default function Home() {
           <PostModal
             post={posts && posts.find((post) => post.id === router.query.post)}
             handleUpvotes={handleUpvotes}
-            isUpvoted={upvotes ? upvotes[router.query.post] : false}
+            isUpvoted={upvotes && currentPost ? upvotes[currentPost] : false}
           />
         </ModalDialog>
       )}

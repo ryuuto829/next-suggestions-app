@@ -2,14 +2,19 @@ import { useState } from 'react'
 import { Dialog, Listbox } from '@headlessui/react'
 import { useForm, Controller, FieldValues } from 'react-hook-form'
 
-export type SuggestionModalProps = {
-  handleFormSubmit: (data: FieldValues) => Promise<void>
-}
-
 const menuOptions = [
   { id: 1, name: '💡 Feature Request' },
   { id: 2, name: '📝 Feedback' },
 ]
+
+type MenuOption = {
+  id: number
+  name: string
+}
+
+export type SuggestionModalProps = {
+  handleFormSubmit: (data: FieldValues) => Promise<void>
+}
 
 export default function SuggestionModal({ handleFormSubmit }: SuggestionModalProps) {
   const { control, register, handleSubmit } = useForm()
@@ -44,7 +49,7 @@ export default function SuggestionModal({ handleFormSubmit }: SuggestionModalPro
               id="topic"
               value={topic}
               className="mt-1 relative"
-              onChange={(post) => {
+              onChange={(post: MenuOption) => {
                 onChange(post.name)
                 setTopic(post)
               }}
