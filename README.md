@@ -1,8 +1,14 @@
+<div align="center">
+
 # Next Suggestions App
 
 Easily add user suggestions and feedbacks.
 
+**https://next-suggestions-app.vercel.app/**
+
 ![demo](https://raw.githubusercontent.com/ryuuto829/next-suggestions-app/master/_assets/next-suggestions-app-demo.gif)
+
+</div>
 
 ## Getting Started
 

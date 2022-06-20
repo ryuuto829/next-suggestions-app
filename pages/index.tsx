@@ -3,9 +3,10 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { NextSeo } from 'next-seo'
 import { compareDesc, parseISO } from 'date-fns'
-import { FieldValues } from 'react-hook-form'
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { collection, doc } from 'firebase/firestore'
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
+import { FieldValues } from 'react-hook-form'
+import { MarkGithubIcon } from '@primer/octicons-react'
 import { toast } from 'react-toastify'
 
 import { db } from '@lib/firebase'
@@ -202,6 +203,38 @@ export default function Home() {
           </div>
         </main>
       </div>
+      <footer className="px-5 pb-20 pt-10 sm:pb-10 sm:pt-20 text-center flex flex-col items-center text-sm text-[color:var(--dark-gray-charcoal-color)]">
+        <div className="mb-1">
+          Next Suggestion App is built with{' '}
+          <a
+            href="https://nextjs.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-200"
+          >
+            Next.js
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://firebase.google.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-200"
+          >
+            Firebase
+          </a>
+          .
+        </div>
+        <a
+          href="https://github.com/ryuuto829/next-suggestions-app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center hover:text-gray-200"
+        >
+          <MarkGithubIcon className="mr-2" />
+          <span>Source on GitHub</span>
+        </a>
+      </footer>
     </>
   )
 }

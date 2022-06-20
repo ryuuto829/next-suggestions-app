@@ -4,16 +4,16 @@ const description = 'Vote on existing ideas or suggest new ones.'
 const SEO = {
   title,
   description,
-  canonical: 'https://example.com',
+  canonical: 'https://next-suggestions-app.vercel.app/',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://example.com',
+    url: 'https://next-suggestions-app.vercel.app/',
     title,
     description,
     images: [
       {
-        url: 'https://example.com/og.png',
+        url: 'https://next-suggestions-app.vercel.app/og.png',
         alt: title,
         width: 1200,
         height: 630,
