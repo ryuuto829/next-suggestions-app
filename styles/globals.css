@@ -11,6 +11,10 @@
   --dark-gray-charcoal-color: #b2b8cd;
 }
 
+:root {
+  color-scheme: dark;
+}
+
 html {
   min-width: 320px;
   scroll-behavior: smooth;
