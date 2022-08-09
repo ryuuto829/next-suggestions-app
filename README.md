@@ -2,13 +2,20 @@
 
 # Next Suggestions App
 
-Easily add user suggestions and feedbacks.
+Comments and feedback for your website. Vote on existing ideas or suggest new ones.
 
 **https://next-suggestions-app.vercel.app/**
 
 ![demo](https://raw.githubusercontent.com/ryuuto829/next-suggestions-app/master/_assets/next-suggestions-app-demo.gif)
 
 </div>
+
+## Features
+
+- Firebase Authentication w/ Google and Github
+- Form for creating suggestions
+- Upvote users feedback in realtime
+- Sorting options for suggestions
 
 ## Getting Started
 
